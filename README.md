@@ -13,6 +13,7 @@ compiler.c.elf.libs= ...
 ### Add library
 Best thing is to use the Arduino Library Manager.
 * Go to Sketch > Include Library > Manage Libraries.
+* Install [ArduinoJson](https://arduinojson.org/) v5.x by Benoit Blanchon
 * Install WebSockets by Markus Sattler
 * Install SocketIoClient
 * Select Sketch > Include Library > SocketIoClient
@@ -56,11 +57,11 @@ binds a function to an event.
 ```callback``` callback function to call when the event is triggered
 Function signature must be
 ```c
-void (const char * payload, size_t length)
+void (const JsonVariant payload)
 ```
 ##### Example
 ```c
-void event(const char * payload, size_t length) {
+void event(const JsonVariant payload) {
 	//do stuff
 }
 socket.on("event", event);
@@ -73,11 +74,13 @@ socket.on("event", event);
 emits an event to the server.
 ##### Parameter
 ```event``` name of the event to be emitted
-```payload``` string of the payload to be sent with the event. Plain strings and object property names should be encapsulated in quotes.
+```payload``` [JsonVariant](https://arduinojson.org/v5/api/jsonvariant/) of the payload to be sent with the event 
 ##### Example
 ```c
-socket.emit("plainString", "\"this is a plain string\"");
-socket.emit("jsonObject", "{\"foo\":\"bar\"}");
+DynamicJsonBuffer jsonBuffer;
+JsonObject& json = jsonBuffer.createObject();
+json["foo"] = "bar";
+socket.emit("jsonObject", json);
 ```
 
 ### SocketIoClient::loop()
